@@ -96,6 +96,7 @@ button.error { background: var(--error); }
   <button onclick="iniciar('portugues')">Língua Portuguesa</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Raciocínio Lógico</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Conhecimentos Específicos</button>
+  <button class="secondary" onclick="revisarErros()">Revisar só erros</button>
 </div>
 
 <!-- FLASHCARD -->
@@ -715,6 +716,8 @@ const flashcards = {
 
 let lista = [];
 let atual = 0;
+let erros = [];
+let modoErro = false;
 let stats = JSON.parse(localStorage.getItem("stats")) || { acertos: 0, erros: 0 };
 
 /* ================= FUNÇÕES ================= */
@@ -745,10 +748,12 @@ function mostrarResposta() {
 function marcar(acertou) {
   if (acertou) {
     stats.acertos++;
-    lista[atual].peso = Math.max(1, lista[atual].peso - 1);
+    if (modoErro) {
+      erros.splice(atual, 1); // remove da lista de erros
+    }
   } else {
     stats.erros++;
-    lista[atual].peso += 2;
+    erros.push(lista[atual]); // salva erro
     lista.push(lista[atual]); // reaparece
   }
   salvar();
@@ -770,6 +775,7 @@ function salvar() {
 }
 
 function voltar() {
+  modoErro = false;
   document.getElementById("flash").classList.add("hidden");
   document.getElementById("menu").classList.remove("hidden");
 }
@@ -781,10 +787,26 @@ function zerarProgresso() {
     atualizarStats();
   }
 }
+  function revisarErros() {
+  if (erros.length === 0) {
+    alert("Nenhum erro para revisar 🎉");
+    return;
+  }
+
+  modoErro = true;
+  lista = [...erros];
+  atual = 0;
+
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("flash").classList.remove("hidden");
+
+  atualizar();
+}
 </script>
 
 </body>
 </html>
+
 
 
 
