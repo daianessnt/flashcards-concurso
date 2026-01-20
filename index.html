@@ -13,6 +13,7 @@
   --success: #2f8f5b;
   --error: #c95a5a;
   --text: #2b2b2b;
+  --warning: #f2b705;
 }
 
 * {
@@ -83,6 +84,22 @@ button.erros:hover,
 button.error:hover {
   opacity: 0.9;
   transform: scale(1.02);
+}
+
+button.warning {
+  background: var(--warning);
+  color: white;
+  font-weight: 600;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+button.warning:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+button.warning:active {
+  transform: scale(0.98);
 }
 
 /* CARD */
@@ -167,6 +184,7 @@ button.error:hover {
   </div>
 
   <button onclick="mostrarResposta()">Mostrar resposta</button>
+  <button class="warning" onclick="pular()">Pular</button>
   <button class="success" onclick="marcar(true)">Acertei</button>
   <button class="error" onclick="marcar(false)">Errei</button>
 
@@ -868,7 +886,21 @@ function revisarErros() {
 
   atualizar();
 }
+  
+function pular() {
+  // move o card atual para o final da lista
+  const atualCard = lista.splice(atual, 1)[0];
+  lista.push(atualCard);
+
+  // se passou do tamanho, volta ao início
+  if (atual >= lista.length) {
+    atual = 0;
+  }
+
+  atualizar();
+}
 </script>
 
 </body>
 </html>
+
