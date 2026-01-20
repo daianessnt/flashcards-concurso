@@ -34,22 +34,31 @@ header {
   font-size: 1.4rem;
 }
 
+/* CONTAINER */
 .container {
   max-width: 700px;
   margin: auto;
   padding: 1rem;
 }
 
+/* BOTÕES */
 button {
   width: 100%;
+  min-height: 48px;
   padding: 0.9rem;
   margin: 0.4rem 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
   background: var(--primary);
   color: white;
+  touch-action: manipulation;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.97);
 }
 
 button.secondary {
@@ -62,16 +71,21 @@ button.success {
 
 button.error {
   background: var(--error);
-  color: white;
-  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
+button.erros {
+  background: var(--error);
+  color: white;
+  font-weight: 600;
+}
+
+button.erros:hover,
 button.error:hover {
   opacity: 0.9;
   transform: scale(1.02);
 }
 
-
+/* CARD */
 .card {
   background: var(--card);
   border-radius: 14px;
@@ -91,12 +105,42 @@ button.error:hover {
   text-align: center;
 }
 
-.hidden { display: none; }
-
 .stats {
   text-align: center;
   margin-top: 0.6rem;
   font-size: 0.9rem;
+}
+
+.hidden {
+  display: none;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  header {
+    font-size: 1.2rem;
+    padding: 0.8rem;
+  }
+
+  .container {
+    padding: 0.8rem;
+  }
+
+  .card {
+    padding: 1.2rem;
+  }
+
+  .pergunta {
+    font-size: 1.1rem;
+  }
+
+  .resposta {
+    font-size: 1rem;
+  }
+
+  .stats {
+    font-size: 0.85rem;
+  }
 }
 </style>
 </head>
@@ -129,7 +173,7 @@ button.error:hover {
   <div class="stats" id="stats"></div>
 
   <button class="secondary" onclick="voltar()">Voltar ao menu</button>
-  <button class="secondary" onclick="zerarProgresso()"> Zerar acertos e erros</button>
+  <button class="secondary" onclick="zerarProgresso()">Zerar acertos e erros</button>
 </div>
 
 </div>
@@ -734,7 +778,11 @@ let lista = [];
 let atual = 0;
 let erros = [];
 let modoErro = false;
-let stats = JSON.parse(localStorage.getItem("stats")) || { acertos: 0, erros: 0 };
+
+let stats = JSON.parse(localStorage.getItem("stats")) || {
+  acertos: 0,
+  erros: 0
+};
 
 /* ================= FUNÇÕES ================= */
 
@@ -743,7 +791,8 @@ function embaralhar(array) {
 }
 
 function iniciar(materia) {
-  lista = embaralhar(flashcards[materia]);
+  modoErro = false;
+  lista = embaralhar([...flashcards[materia]]);
   atual = 0;
   document.getElementById("menu").classList.add("hidden");
   document.getElementById("flash").classList.remove("hidden");
@@ -765,12 +814,12 @@ function marcar(acertou) {
   if (acertou) {
     stats.acertos++;
     if (modoErro) {
-      erros.splice(atual, 1); // remove da lista de erros
+      erros.splice(atual, 1);
     }
   } else {
     stats.erros++;
-    erros.push(lista[atual]); // salva erro
-    lista.push(lista[atual]); // reaparece
+    erros.push(lista[atual]);
+    lista.push(lista[atual]);
   }
   salvar();
   proximo();
@@ -799,11 +848,12 @@ function voltar() {
 function zerarProgresso() {
   if (confirm("Tem certeza que deseja zerar acertos e erros?")) {
     stats = { acertos: 0, erros: 0 };
-    localStorage.setItem("stats", JSON.stringify(stats));
+    salvar();
     atualizarStats();
   }
 }
-  function revisarErros() {
+
+function revisarErros() {
   if (erros.length === 0) {
     alert("Nenhum erro para revisar 🎉");
     return;
@@ -822,10 +872,3 @@ function zerarProgresso() {
 
 </body>
 </html>
-
-
-
-
-
-
-
