@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards Concurso</title>
+
+<style>
+:root {
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --primary: #355f8a;
+  --success: #2f8f5b;
+  --error: #c95a5a;
+  --text: #2b2b2b;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  background: var(--primary);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.9rem;
+  margin: 0.4rem 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: var(--primary);
+  color: white;
+}
+
+button.secondary { background: #6c757d; }
+button.success { background: var(--success); }
+button.error { background: var(--error); }
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 1.6rem;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+}
+
+.pergunta {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.resposta {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: var(--success);
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+.stats {
+  text-align: center;
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>Flashcards para Concurso</header>
+
+<div class="container">
+
+<!-- MENU -->
+<div id="menu">
+  <button onclick="iniciar('portugues')">Língua Portuguesa</button>
+  <button onclick="alert('Estrutura pronta – inserir conteúdo')">Raciocínio Lógico</button>
+  <button onclick="alert('Estrutura pronta – inserir conteúdo')">Conhecimentos Específicos</button>
+</div>
+
+<!-- FLASHCARD -->
+<div id="flash" class="hidden">
+  <div class="card">
+    <div id="pergunta" class="pergunta"></div>
+    <div id="resposta" class="resposta hidden"></div>
+  </div>
+
+  <button onclick="mostrarResposta()">Mostrar resposta</button>
+  <button class="success" onclick="marcar(true)">Acertei</button>
+  <button class="error" onclick="marcar(false)">Errei</button>
+
+  <div class="stats" id="stats"></div>
+
+  <button class="secondary" onclick="voltar()">Voltar ao menu</button>
+</div>
+
+</div>
+
+<script>
+/* ================= DADOS ================= */
+
+const flashcards = {
+  portugues: [
+    {
+      q: "O que é compreensão textual?",
+      r: "Capacidade de entender informações explícitas e implícitas em um texto.",
+      peso: 1
+    },
+    {
+      q: "Diferença entre denotação e conotação",
+      r: "Denotação é o sentido literal; conotação é o sentido figurado.",
+      peso: 1
+    },
+    {
+      q: "O que são figuras de linguagem?",
+      r: "Recursos expressivos que alteram o sentido literal para gerar efeito.",
+      peso: 1
+    },
+    {
+      q: "O que é concordância verbal?",
+      r: "Adequação do verbo ao sujeito em número e pessoa.",
+      peso: 1
+    },
+    {
+      q: "Quando ocorre crase?",
+      r: "Quando há fusão da preposição 'a' com o artigo feminino 'a'.",
+      peso: 1
+    },
+    {
+      q: "O que caracteriza um período composto?",
+      r: "Presença de duas ou mais orações.",
+      peso: 1
+    },
+    {
+      q: "Finalidade da redação oficial",
+      r: "Comunicação objetiva, clara, formal e padronizada na Administração Pública.",
+      peso: 1
+    }
+  ]
+};
+
+let lista = [];
+let atual = 0;
+let stats = JSON.parse(localStorage.getItem("stats")) || { acertos: 0, erros: 0 };
+
+/* ================= FUNÇÕES ================= */
+
+function embaralhar(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function iniciar(materia) {
+  lista = embaralhar(flashcards[materia]);
+  atual = 0;
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("flash").classList.remove("hidden");
+  atualizar();
+}
+
+function atualizar() {
+  document.getElementById("pergunta").innerText = lista[atual].q;
+  document.getElementById("resposta").innerText = lista[atual].r;
+  document.getElementById("resposta").classList.add("hidden");
+  atualizarStats();
+}
+
+function mostrarResposta() {
+  document.getElementById("resposta").classList.remove("hidden");
+}
+
+function marcar(acertou) {
+  if (acertou) {
+    stats.acertos++;
+    lista[atual].peso = Math.max(1, lista[atual].peso - 1);
+  } else {
+    stats.erros++;
+    lista[atual].peso += 2;
+    lista.push(lista[atual]); // reaparece
+  }
+  salvar();
+  proximo();
+}
+
+function proximo() {
+  atual = (atual + 1) % lista.length;
+  atualizar();
+}
+
+function atualizarStats() {
+  document.getElementById("stats").innerText =
+    `Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
+}
+
+function salvar() {
+  localStorage.setItem("stats", JSON.stringify(stats));
+}
+
+function voltar() {
+  document.getElementById("flash").classList.add("hidden");
+  document.getElementById("menu").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
