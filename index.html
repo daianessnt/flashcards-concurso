@@ -52,9 +52,25 @@ button {
   color: white;
 }
 
-button.secondary { background: #6c757d; }
-button.success { background: var(--success); }
-button.error { background: var(--error); }
+button.secondary {
+  background: #6c757d;
+}
+
+button.success {
+  background: var(--success);
+}
+
+button.error {
+  background: var(--error);
+  color: white;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+button.error:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
 
 .card {
   background: var(--card);
@@ -96,7 +112,7 @@ button.error { background: var(--error); }
   <button onclick="iniciar('portugues')">Língua Portuguesa</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Raciocínio Lógico</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Conhecimentos Específicos</button>
-  <button class="secondary" onclick="revisarErros()">Revisar só erros</button>
+  <button class="erros" onclick="revisarErros()">Revisar Erros</button>
 </div>
 
 <!-- FLASHCARD -->
@@ -806,6 +822,7 @@ function zerarProgresso() {
 
 </body>
 </html>
+
 
 
 
