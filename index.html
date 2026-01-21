@@ -6,6 +6,7 @@
 <title>Flashcards Concurso</title>
 
 <style>
+/* ================= TEMA CLARO (PADRÃO) ================= */
 :root {
   --bg: #f6f8fb;
   --card: #ffffff;
@@ -17,6 +18,18 @@
   --text: #2b2b2b;
 }
 
+/* ================= TEMA ESCURO ================= */
+body.dark {
+  --bg: #121417;
+  --card: #1e2228;
+  --primary: #4c7bbf;
+  --success: #3fbf7f;
+  --error: #e06c75;
+  --warning: #f1c40f;
+  --tip: #9d8cff;
+  --text: #e6e6e6;
+}
+
 * {
   box-sizing: border-box;
   font-family: "Segoe UI", Roboto, sans-serif;
@@ -26,6 +39,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  transition: background 0.3s, color 0.3s;
 }
 
 header {
@@ -34,6 +48,22 @@ header {
   padding: 1rem;
   text-align: center;
   font-size: 1.4rem;
+  position: relative;
+}
+
+/* BOTÃO MODO ESCURO */
+.toggle-theme {
+  position: absolute;
+  right: 1rem;
+  top: 0.8rem;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: white;
 }
 
 .container {
@@ -57,16 +87,14 @@ button {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-button:active {
-  transform: scale(0.97);
-}
+button:active { transform: scale(0.97); }
 
 button.success { background: var(--success); }
 button.error { background: var(--error); }
 button.warning { background: var(--warning); }
 button.secondary { background: #6c757d; }
 
-/* BOTÕES DE AÇÃO */
+/* AÇÕES */
 .actions {
   display: flex;
   gap: 0.6rem;
@@ -77,7 +105,6 @@ button.secondary { background: #6c757d; }
   flex: 1;
   font-size: 1.4rem;
   font-weight: bold;
-  padding: 0.8rem;
 }
 
 /* CARD */
@@ -85,7 +112,7 @@ button.secondary { background: #6c757d; }
   background: var(--card);
   border-radius: 16px;
   padding: 1.6rem;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
 }
 
 .pergunta {
@@ -97,7 +124,7 @@ button.secondary { background: #6c757d; }
   margin-top: 1rem;
   font-size: 1.05rem;
   color: var(--tip);
-  background: rgba(124, 92, 255, 0.08);
+  background: rgba(124, 92, 255, 0.15);
   padding: 0.8rem;
   border-radius: 10px;
   text-align: center;
@@ -107,7 +134,7 @@ button.secondary { background: #6c757d; }
   margin-top: 1rem;
   font-size: 1.1rem;
   color: var(--success);
-  background: rgba(47, 143, 91, 0.08);
+  background: rgba(47, 143, 91, 0.15);
   padding: 0.8rem;
   border-radius: 10px;
   text-align: center;
@@ -119,15 +146,16 @@ button.secondary { background: #6c757d; }
   font-size: 0.9rem;
 }
 
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 </style>
 </head>
 
 <body>
 
-<header>Flashcards para Concurso</header>
+<header>
+  Flashcards para Concurso
+  <button class="toggle-theme" onclick="toggleTheme()">🌙</button>
+</header>
 
 <div class="container">
 
@@ -161,12 +189,31 @@ button.secondary { background: #6c757d; }
 
   <button class="secondary" onclick="voltar()">Voltar ao menu</button>
   <button class="secondary" onclick="zerarProgresso()">Zerar acertos e erros</button>
-
 </div>
 
 </div>
 
 <script>
+/* ================= MODO ESCURO ================= */
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+  atualizarIcone();
+}
+
+function atualizarIcone() {
+  document.querySelector(".toggle-theme").innerText =
+    document.body.classList.contains("dark") ? "☀️" : "🌙";
+}
+
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}
+atualizarIcone();
+
 /* ================= DADOS ================= */
 
 const flashcards = {
@@ -175,11 +222,6 @@ const flashcards = {
       q: "O que é compreensão textual?",
       d: "Observe o que está explícito no texto.",
       r: "É a capacidade de identificar informações explícitas presentes no texto."
-    },
-    {
-      q: "O que é interpretação textual?",
-      d: "Pense no que está implícito.",
-      r: "É a capacidade de inferir informações que não estão ditas diretamente."
     }
   ]
 };
@@ -187,85 +229,51 @@ const flashcards = {
 let lista = [];
 let atual = 0;
 let modoRevisao = false;
-
 let errosSalvos = JSON.parse(localStorage.getItem("erros")) || [];
-
-let stats = JSON.parse(localStorage.getItem("stats")) || {
-  acertos: 0,
-  erros: 0
-};
+let stats = JSON.parse(localStorage.getItem("stats")) || { acertos: 0, erros: 0 };
 
 /* ================= FUNÇÕES ================= */
 
-function embaralhar(array) {
-  return array.sort(() => Math.random() - 0.5);
-}
-
-function iniciar(materia) {
-  lista = embaralhar([...flashcards[materia]]);
+function iniciar(m) {
+  lista = [...flashcards[m]].sort(() => Math.random() - 0.5);
   modoRevisao = false;
   atual = 0;
-  abrirFlash();
+  menu.classList.add("hidden");
+  flash.classList.remove("hidden");
+  atualizar();
 }
 
 function revisarErros() {
-  if (errosSalvos.length === 0) {
-    alert("🎉 Você não tem erros para revisar!");
-    return;
-  }
-  lista = embaralhar([...errosSalvos]);
+  if (!errosSalvos.length) return alert("🎉 Sem erros!");
+  lista = [...errosSalvos];
   modoRevisao = true;
   atual = 0;
-  abrirFlash();
-}
-
-function abrirFlash() {
-  document.getElementById("menu").classList.add("hidden");
-  document.getElementById("flash").classList.remove("hidden");
+  menu.classList.add("hidden");
+  flash.classList.remove("hidden");
   atualizar();
 }
 
 function atualizar() {
-  const card = lista[atual];
-
-  document.getElementById("pergunta").innerText = card.q;
-
-  const dicaEl = document.getElementById("dica");
-  dicaEl.innerText = card.d || "Sem dica 🙂";
-  dicaEl.classList.add("hidden");
-
-  const respostaEl = document.getElementById("resposta");
-  respostaEl.innerText = card.r;
-  respostaEl.classList.add("hidden");
-
-  atualizarStats();
+  const c = lista[atual];
+  pergunta.innerText = c.q;
+  dica.innerText = c.d || "Sem dica 🙂";
+  resposta.innerText = c.r;
+  dica.classList.add("hidden");
+  resposta.classList.add("hidden");
+  statsEl();
 }
 
-function mostrarDica() {
-  document.getElementById("dica").classList.toggle("hidden");
-}
+function mostrarDica() { dica.classList.toggle("hidden"); }
+function mostrarResposta() { resposta.classList.remove("hidden"); }
 
-function mostrarResposta() {
-  document.getElementById("resposta").classList.remove("hidden");
-}
-
-function marcar(acertou) {
-  if (acertou) {
-    stats.acertos++;
-  } else {
-    stats.erros++;
-    if (!modoRevisao) {
-      errosSalvos.push(lista[atual]);
-      localStorage.setItem("erros", JSON.stringify(errosSalvos));
-    }
-  }
+function marcar(ok) {
+  ok ? stats.acertos++ : (stats.erros++, !modoRevisao && errosSalvos.push(lista[atual]));
   salvar();
   proximo();
 }
 
 function pular() {
-  const card = lista.splice(atual, 1)[0];
-  lista.push(card);
+  lista.push(lista.splice(atual, 1)[0]);
   atualizar();
 }
 
@@ -274,29 +282,27 @@ function proximo() {
   atualizar();
 }
 
-function atualizarStats() {
-  document.getElementById("stats").innerText =
-    `Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
-}
-
 function salvar() {
   localStorage.setItem("stats", JSON.stringify(stats));
+  localStorage.setItem("erros", JSON.stringify(errosSalvos));
+}
+
+function statsEl() {
+  statsEl = document.getElementById("stats");
+  statsEl.innerText = `Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
 }
 
 function zerarProgresso() {
-  if (confirm("Tem certeza que deseja zerar acertos, erros e revisões?")) {
-    stats = { acertos: 0, erros: 0 };
-    errosSalvos = [];
-    localStorage.removeItem("stats");
-    localStorage.removeItem("erros");
-    atualizarStats();
-    alert("Progresso zerado com sucesso ✅");
-  }
+  if (!confirm("Zerar tudo?")) return;
+  stats = { acertos: 0, erros: 0 };
+  errosSalvos = [];
+  localStorage.clear();
+  statsEl();
 }
 
 function voltar() {
-  document.getElementById("flash").classList.add("hidden");
-  document.getElementById("menu").classList.remove("hidden");
+  flash.classList.add("hidden");
+  menu.classList.remove("hidden");
 }
 </script>
 
