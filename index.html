@@ -12,7 +12,8 @@
   --primary: #355f8a;
   --success: #2f8f5b;
   --error: #c95a5a;
-  --warning: #f0ad4e;
+  --warning: #f2b705;
+  --tip: #7c5cff;
   --text: #2b2b2b;
 }
 
@@ -41,40 +42,45 @@ header {
   padding: 1rem;
 }
 
+/* BOTÕES */
 button {
   width: 100%;
+  min-height: 48px;
   padding: 0.9rem;
   margin: 0.4rem 0;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 1rem;
   cursor: pointer;
+  color: white;
   background: var(--primary);
-  color: white;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-button.secondary {
-  background: #6c757d;
+button:active {
+  transform: scale(0.97);
 }
 
-button.success {
-  background: var(--success);
+button.success { background: var(--success); }
+button.error { background: var(--error); }
+button.warning { background: var(--warning); }
+button.secondary { background: #6c757d; }
+
+/* BOTÕES DE AÇÃO */
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
 }
 
-button.error {
-  background: var(--error);
+.actions button {
+  flex: 1;
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 0.8rem;
 }
 
-button.warning {
-  background: var(--warning);
-  color: white;
-}
-
-button:hover {
-  opacity: 0.9;
-  transform: scale(1.02);
-}
-
+/* CARD */
 .card {
   background: var(--card);
   border-radius: 16px;
@@ -87,31 +93,34 @@ button:hover {
   text-align: center;
 }
 
-.resposta, .dica {
+.dica {
   margin-top: 1rem;
   font-size: 1.05rem;
+  color: var(--tip);
+  background: rgba(124, 92, 255, 0.08);
+  padding: 0.8rem;
+  border-radius: 10px;
   text-align: center;
 }
 
 .resposta {
+  margin-top: 1rem;
+  font-size: 1.1rem;
   color: var(--success);
-}
-
-.dica {
-  color: #856404;
-  background: #fff3cd;
-  padding: 0.6rem;
-  border-radius: 8px;
-}
-
-.hidden {
-  display: none;
+  background: rgba(47, 143, 91, 0.08);
+  padding: 0.8rem;
+  border-radius: 10px;
+  text-align: center;
 }
 
 .stats {
   text-align: center;
   margin-top: 0.6rem;
   font-size: 0.9rem;
+}
+
+.hidden {
+  display: none;
 }
 </style>
 </head>
@@ -125,25 +134,28 @@ button:hover {
 <!-- MENU -->
 <div id="menu">
   <button onclick="iniciar('portugues')">Língua Portuguesa</button>
-  <button onclick="alert('Estrutura pronta')">Raciocínio Lógico</button>
-  <button onclick="alert('Estrutura pronta')">Conhecimentos Específicos</button>
-  <button class="error" onclick="revisarErros()">Revisar Só Erros</button>
+  <button onclick="alert('Estrutura pronta – inserir conteúdo')">Raciocínio Lógico</button>
+  <button onclick="alert('Estrutura pronta – inserir conteúdo')">Conhecimentos Específicos</button>
+  <button class="error" onclick="revisarErros()">Revisar erros</button>
 </div>
 
 <!-- FLASHCARD -->
 <div id="flash" class="hidden">
+
   <div class="card">
     <div id="pergunta" class="pergunta"></div>
     <div id="dica" class="dica hidden"></div>
     <div id="resposta" class="resposta hidden"></div>
   </div>
 
-  <button onclick="mostrarDica()">Mostrar dica</button>
-  <button onclick="mostrarResposta()">Mostrar resposta</button>
+  <button onclick="mostrarDica()">💡 Dica</button>
+  <button onclick="mostrarResposta()">👀 Mostrar resposta</button>
 
-  <button class="warning" onclick="pular()">Pular</button>
-  <button class="success" onclick="marcar(true)">Acertei</button>
-  <button class="error" onclick="marcar(false)">Errei</button>
+  <div class="actions">
+    <button class="success" onclick="marcar(true)">✔</button>
+    <button class="error" onclick="marcar(false)">✖</button>
+    <button class="warning" onclick="pular()">⏭</button>
+  </div>
 
   <div class="stats" id="stats"></div>
 
@@ -158,97 +170,122 @@ button:hover {
 const flashcards = {
   portugues: [
     {
-      pergunta: "O que é semântica?",
-      resposta: "É o estudo do significado das palavras e expressões.",
-      dica: "Pense no sentido das palavras."
+      q: "O que é compreensão textual?",
+      d: "Observe o que está explícito no texto.",
+      r: "É a capacidade de identificar informações explícitas presentes no texto."
     },
     {
-      pergunta: "O que é sintaxe?",
-      resposta: "É a parte da gramática que estuda a organização das palavras na frase.",
-      dica: "Está relacionada à estrutura da frase."
+      q: "O que é interpretação textual?",
+      d: "Pense no que está implícito.",
+      r: "É a capacidade de inferir informações que não estão ditas diretamente."
     }
   ]
 };
 
-let fila = [];
-let erros = [];
-let atual = null;
-let revisandoErros = false;
+let lista = [];
+let atual = 0;
+let modoRevisao = false;
+
+let errosSalvos = JSON.parse(localStorage.getItem("erros")) || [];
+
+let stats = JSON.parse(localStorage.getItem("stats")) || {
+  acertos: 0,
+  erros: 0
+};
 
 /* ================= FUNÇÕES ================= */
 
+function embaralhar(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
 function iniciar(materia) {
-  fila = [...flashcards[materia]];
-  erros = JSON.parse(localStorage.getItem("erros")) || [];
-  revisandoErros = false;
-  mostrarProximo();
+  lista = embaralhar([...flashcards[materia]]);
+  modoRevisao = false;
+  atual = 0;
+  abrirFlash();
 }
 
 function revisarErros() {
-  erros = JSON.parse(localStorage.getItem("erros")) || [];
-  if (erros.length === 0) {
-    alert("Nenhum erro para revisar 🎉");
+  if (errosSalvos.length === 0) {
+    alert("🎉 Você não tem erros para revisar!");
     return;
   }
-  fila = [...erros];
-  revisandoErros = true;
-  mostrarProximo();
+  lista = embaralhar([...errosSalvos]);
+  modoRevisao = true;
+  atual = 0;
+  abrirFlash();
 }
 
-function mostrarProximo() {
-  if (fila.length === 0) {
-    voltar();
-    return;
-  }
-
-  atual = fila.shift();
+function abrirFlash() {
   document.getElementById("menu").classList.add("hidden");
   document.getElementById("flash").classList.remove("hidden");
+  atualizar();
+}
 
-  document.getElementById("pergunta").innerText = atual.pergunta;
-  document.getElementById("resposta").innerText = atual.resposta;
-  document.getElementById("dica").innerText = atual.dica || "";
+function atualizar() {
+  const card = lista[atual];
 
-  document.getElementById("resposta").classList.add("hidden");
-  document.getElementById("dica").classList.add("hidden");
+  document.getElementById("pergunta").innerText = card.q;
+
+  const dicaEl = document.getElementById("dica");
+  dicaEl.innerText = card.d || "Sem dica 🙂";
+  dicaEl.classList.add("hidden");
+
+  const respostaEl = document.getElementById("resposta");
+  respostaEl.innerText = card.r;
+  respostaEl.classList.add("hidden");
 
   atualizarStats();
+}
+
+function mostrarDica() {
+  document.getElementById("dica").classList.toggle("hidden");
 }
 
 function mostrarResposta() {
   document.getElementById("resposta").classList.remove("hidden");
 }
 
-function mostrarDica() {
-  if (atual.dica) {
-    document.getElementById("dica").classList.remove("hidden");
-  }
-}
-
 function marcar(acertou) {
-  if (!acertou) {
-    erros.push(atual);
-    localStorage.setItem("erros", JSON.stringify(erros));
+  if (acertou) {
+    stats.acertos++;
+  } else {
+    stats.erros++;
+    if (!modoRevisao) {
+      errosSalvos.push(lista[atual]);
+      localStorage.setItem("erros", JSON.stringify(errosSalvos));
+    }
   }
-  mostrarProximo();
+  salvar();
+  proximo();
 }
 
 function pular() {
-  fila.push(atual); // volta para o fim da fila
-  mostrarProximo();
+  const card = lista.splice(atual, 1)[0];
+  lista.push(card);
+  atualizar();
+}
+
+function proximo() {
+  atual = (atual + 1) % lista.length;
+  atualizar();
+}
+
+function atualizarStats() {
+  document.getElementById("stats").innerText =
+    `Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
+}
+
+function salvar() {
+  localStorage.setItem("stats", JSON.stringify(stats));
 }
 
 function voltar() {
   document.getElementById("flash").classList.add("hidden");
   document.getElementById("menu").classList.remove("hidden");
 }
-
-function atualizarStats() {
-  document.getElementById("stats").innerText =
-    `Cartões restantes: ${fila.length}`;
-}
 </script>
 
 </body>
 </html>
-
