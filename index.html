@@ -13,7 +13,7 @@
   --success: #2f8f5b;
   --error: #c95a5a;
   --warning: #f2b705;
-  --tip: #8b5cf6;
+  --tip: #7c5cff;
   --text: #2b2b2b;
 }
 
@@ -49,12 +49,11 @@ button {
   padding: 0.9rem;
   margin: 0.4rem 0;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 1rem;
   cursor: pointer;
-  background: var(--primary);
   color: white;
-  touch-action: manipulation;
+  background: var(--primary);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -62,45 +61,29 @@ button:active {
   transform: scale(0.97);
 }
 
-button.secondary {
-  background: #6c757d;
-}
+button.success { background: var(--success); }
+button.error { background: var(--error); }
+button.warning { background: var(--warning); }
+button.secondary { background: #6c757d; }
 
-button.success {
-  background: var(--success);
-}
-
-button.error {
-  background: var(--error);
-}
-
-button.warning {
-  background: var(--warning);
-}
-
-button.tip {
-  background: var(--tip);
-  font-weight: 600;
-}
-
-/* AÇÕES EM LINHA */
+/* BOTÕES DE AÇÃO (LINHA) */
 .actions {
   display: flex;
   gap: 0.6rem;
-  margin-top: 0.6rem;
+  margin-top: 0.5rem;
 }
 
 .actions button {
   flex: 1;
-  font-size: 1.5rem;
-  font-weight: 700;
-  padding: 0.8rem 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 0.8rem;
 }
 
 /* CARD */
 .card {
   background: var(--card);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 1.6rem;
   box-shadow: 0 6px 14px rgba(0,0,0,0.06);
 }
@@ -110,10 +93,23 @@ button.tip {
   text-align: center;
 }
 
+.dica {
+  margin-top: 1rem;
+  font-size: 1.05rem;
+  color: var(--tip);
+  background: rgba(124, 92, 255, 0.08);
+  padding: 0.8rem;
+  border-radius: 10px;
+  text-align: center;
+}
+
 .resposta {
   margin-top: 1rem;
   font-size: 1.1rem;
   color: var(--success);
+  background: rgba(47, 143, 91, 0.08);
+  padding: 0.8rem;
+  border-radius: 10px;
   text-align: center;
 }
 
@@ -125,17 +121,6 @@ button.tip {
 
 .hidden {
   display: none;
-}
-
-/* MOBILE */
-@media (max-width: 600px) {
-  header {
-    font-size: 1.2rem;
-  }
-
-  .actions button {
-    font-size: 1.3rem;
-  }
 }
 </style>
 </head>
@@ -151,19 +136,21 @@ button.tip {
   <button onclick="iniciar('portugues')">Língua Portuguesa</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Raciocínio Lógico</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Conhecimentos Específicos</button>
-  <button class="error" onclick="revisarErros()">Revisar Erros</button>
 </div>
 
-<!-- FLASHCARDS -->
+<!-- FLASHCARD -->
 <div id="flash" class="hidden">
+
   <div class="card">
     <div id="pergunta" class="pergunta"></div>
+    <div id="dica" class="dica hidden"></div>
     <div id="resposta" class="resposta hidden"></div>
   </div>
 
-  <button class="tip" onclick="mostrarDica()">💡 Dica</button>
-  <button onclick="mostrarResposta()">Mostrar resposta</button>
+  <button onclick="mostrarDica()">💡 Dica</button>
+  <button onclick="mostrarResposta()">👀 Mostrar resposta</button>
 
+  <!-- AÇÕES -->
   <div class="actions">
     <button class="success" onclick="marcar(true)">✔</button>
     <button class="error" onclick="marcar(false)">✖</button>
@@ -173,7 +160,6 @@ button.tip {
   <div class="stats" id="stats"></div>
 
   <button class="secondary" onclick="voltar()">Voltar ao menu</button>
-  <button class="secondary" onclick="zerarProgresso()">Zerar acertos e erros</button>
 </div>
 
 </div>
@@ -185,8 +171,14 @@ const flashcards = {
   portugues: [
     {
       q: "O que é compreensão textual?",
-      d: "Procure informações explícitas no texto.",
+      d: "Observe o que está explícito no texto.",
       r: "É a capacidade de identificar informações explícitas presentes no texto.",
+      peso: 1
+    },
+    {
+      q: "O que é interpretação textual?",
+      d: "Pense no que está implícito.",
+      r: "É a capacidade de inferir informações que não estão ditas diretamente.",
       peso: 1
     }
   ]
@@ -194,8 +186,6 @@ const flashcards = {
 
 let lista = [];
 let atual = 0;
-let erros = [];
-let modoErro = false;
 
 let stats = JSON.parse(localStorage.getItem("stats")) || {
   acertos: 0,
@@ -209,7 +199,6 @@ function embaralhar(array) {
 }
 
 function iniciar(materia) {
-  modoErro = false;
   lista = embaralhar([...flashcards[materia]]);
   atual = 0;
   document.getElementById("menu").classList.add("hidden");
@@ -219,33 +208,28 @@ function iniciar(materia) {
 
 function atualizar() {
   document.getElementById("pergunta").innerText = lista[atual].q;
-  document.getElementById("resposta").innerText = lista[atual].r;
-  document.getElementById("resposta").classList.add("hidden");
+
+  const dicaEl = document.getElementById("dica");
+  dicaEl.innerText = lista[atual].d || "Sem dica para este card 🙂";
+  dicaEl.classList.add("hidden");
+
+  const respostaEl = document.getElementById("resposta");
+  respostaEl.innerText = lista[atual].r;
+  respostaEl.classList.add("hidden");
+
   atualizarStats();
+}
+
+function mostrarDica() {
+  document.getElementById("dica").classList.toggle("hidden");
 }
 
 function mostrarResposta() {
   document.getElementById("resposta").classList.remove("hidden");
 }
 
-function mostrarDica() {
-  const dica = lista[atual].d;
-  if (!dica) {
-    alert("Este card não possui dica 😊");
-    return;
-  }
-  alert("💡 Dica: " + dica);
-}
-
 function marcar(acertou) {
-  if (acertou) {
-    stats.acertos++;
-    if (modoErro) erros.splice(atual, 1);
-  } else {
-    stats.erros++;
-    erros.push(lista[atual]);
-    lista.push(lista[atual]);
-  }
+  acertou ? stats.acertos++ : stats.erros++;
   salvar();
   proximo();
 }
@@ -253,7 +237,6 @@ function marcar(acertou) {
 function pular() {
   const card = lista.splice(atual, 1)[0];
   lista.push(card);
-  if (atual >= lista.length) atual = 0;
   atualizar();
 }
 
@@ -272,30 +255,8 @@ function salvar() {
 }
 
 function voltar() {
-  modoErro = false;
   document.getElementById("flash").classList.add("hidden");
   document.getElementById("menu").classList.remove("hidden");
-}
-
-function zerarProgresso() {
-  if (confirm("Tem certeza que deseja zerar acertos e erros?")) {
-    stats = { acertos: 0, erros: 0 };
-    salvar();
-    atualizarStats();
-  }
-}
-
-function revisarErros() {
-  if (erros.length === 0) {
-    alert("Nenhum erro para revisar 🎉");
-    return;
-  }
-  modoErro = true;
-  lista = [...erros];
-  atual = 0;
-  document.getElementById("menu").classList.add("hidden");
-  document.getElementById("flash").classList.remove("hidden");
-  atualizar();
 }
 </script>
 
