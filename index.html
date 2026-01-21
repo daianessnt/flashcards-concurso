@@ -12,8 +12,9 @@
   --primary: #355f8a;
   --success: #2f8f5b;
   --error: #c95a5a;
-  --text: #2b2b2b;
   --warning: #f2b705;
+  --tip: #8b5cf6;
+  --text: #2b2b2b;
 }
 
 * {
@@ -35,7 +36,6 @@ header {
   font-size: 1.4rem;
 }
 
-/* CONTAINER */
 .container {
   max-width: 700px;
   margin: auto;
@@ -74,32 +74,27 @@ button.error {
   background: var(--error);
 }
 
-button.erros {
-  background: var(--error);
-  color: white;
-  font-weight: 600;
-}
-
-button.erros:hover,
-button.error:hover {
-  opacity: 0.9;
-  transform: scale(1.02);
-}
-
 button.warning {
   background: var(--warning);
-  color: white;
+}
+
+button.tip {
+  background: var(--tip);
   font-weight: 600;
-  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-button.warning:hover {
-  opacity: 0.9;
-  transform: scale(1.02);
+/* AÇÕES EM LINHA */
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
 }
 
-button.warning:active {
-  transform: scale(0.98);
+.actions button {
+  flex: 1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 0.8rem 0;
 }
 
 /* CARD */
@@ -136,27 +131,10 @@ button.warning:active {
 @media (max-width: 600px) {
   header {
     font-size: 1.2rem;
-    padding: 0.8rem;
   }
 
-  .container {
-    padding: 0.8rem;
-  }
-
-  .card {
-    padding: 1.2rem;
-  }
-
-  .pergunta {
-    font-size: 1.1rem;
-  }
-
-  .resposta {
-    font-size: 1rem;
-  }
-
-  .stats {
-    font-size: 0.85rem;
+  .actions button {
+    font-size: 1.3rem;
   }
 }
 </style>
@@ -173,20 +151,24 @@ button.warning:active {
   <button onclick="iniciar('portugues')">Língua Portuguesa</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Raciocínio Lógico</button>
   <button onclick="alert('Estrutura pronta – inserir conteúdo')">Conhecimentos Específicos</button>
-  <button class="erros" onclick="revisarErros()">Revisar Erros</button>
+  <button class="error" onclick="revisarErros()">Revisar Erros</button>
 </div>
 
-<!-- FLASHCARD -->
+<!-- FLASHCARDS -->
 <div id="flash" class="hidden">
   <div class="card">
     <div id="pergunta" class="pergunta"></div>
     <div id="resposta" class="resposta hidden"></div>
   </div>
 
+  <button class="tip" onclick="mostrarDica()">💡 Dica</button>
   <button onclick="mostrarResposta()">Mostrar resposta</button>
-  <button class="warning" onclick="pular()">Pular</button>
-  <button class="success" onclick="marcar(true)">Acertei</button>
-  <button class="error" onclick="marcar(false)">Errei</button>
+
+  <div class="actions">
+    <button class="success" onclick="marcar(true)">✔</button>
+    <button class="error" onclick="marcar(false)">✖</button>
+    <button class="warning" onclick="pular()">⏭</button>
+  </div>
 
   <div class="stats" id="stats"></div>
 
@@ -200,595 +182,13 @@ button.warning:active {
 /* ================= DADOS ================= */
 
 const flashcards = {
- portugues: [
-  {
-    q: "O que é compreensão textual?",
-    r: "É a capacidade de identificar informações explícitas presentes no texto.",
-    peso: 1
-  },
-  {
-    q: "O que é interpretação textual?",
-    r: "É a capacidade de inferir informações implícitas, indo além do que está literalmente escrito.",
-    peso: 1
-  },
-  {
-    q: "Diferença principal entre compreensão e interpretação",
-    r: "Compreensão trata do explícito; interpretação envolve inferência e leitura nas entrelinhas.",
-    peso: 1
-  },
-  {
-    q: "O que é tipologia textual?",
-    r: "Classificação dos textos conforme sua estrutura linguística predominante.",
-    peso: 1
-  },
-  {
-    q: "Texto narrativo – característica principal",
-    r: "Relato de fatos ou acontecimentos, com personagens, tempo e espaço.",
-    peso: 1
-  },
-  {
-    q: "Texto descritivo – característica principal",
-    r: "Caracterização de pessoas, objetos, ambientes ou sentimentos.",
-    peso: 1
-  },
-  {
-    q: "Texto dissertativo-argumentativo – característica principal",
-    r: "Apresenta ideias, opiniões e argumentos para defender um ponto de vista.",
-    peso: 1
-  },
-  {
-    q: "Texto injuntivo – finalidade",
-    r: "Orientar, instruir ou aconselhar o leitor por meio de ordens ou instruções.",
-    peso: 1
-  },
-  {
-    q: "Texto expositivo – objetivo",
-    r: "Explicar, informar ou apresentar conceitos de forma objetiva.",
-    peso: 1
-  },
-  {
-    q: "Gêneros textuais – definição",
-    r: "Formas de uso social da língua, como carta, e-mail, notícia, edital, relatório.",
-    peso: 1
-  },
-  {
-    q: "Diferença entre tipologia e gênero textual",
-    r: "Tipologia é estrutural; gênero é social e funcional.",
-    peso: 1
-  },
-  {
-    q: "O que são informações explícitas?",
-    r: "Aquelas expressas diretamente no texto.",
-    peso: 1
-  },
-  {
-    q: "O que são informações implícitas?",
-    r: "Aquelas que precisam ser inferidas a partir do texto.",
-    peso: 1
-  },
-  {
-    q: "Inferência textual – conceito",
-    r: "Processo de deduzir informações não ditas explicitamente com base no texto.",
-    peso: 1
-  },
-  {
-    q: "Principal erro em questões de interpretação",
-    r: "Responder com base em opinião pessoal e não no texto.",
-    peso: 1
-  },
-  {
-    q: "Coerência textual – definição",
-    r: "Relação lógica entre as ideias do texto.",
-    peso: 1
-  },
-  {
-    q: "Coesão textual – definição",
-    r: "Ligação entre palavras, frases e parágrafos por meio de conectivos e pronomes.",
-    peso: 1
-  },
-/* ===== BLOCO 2 — SEMÂNTICA ===== */
-{
-  q: "O que é denotação?",
-  r: "É o sentido literal da palavra, aquele registrado no dicionário.",
-  peso: 1
-},
-{
-  q: "O que é conotação?",
-  r: "É o sentido figurado da palavra, dependente do contexto.",
-  peso: 1
-},
-{
-  q: "Frase em sentido denotativo — característica",
-  r: "Não admite interpretação subjetiva ou figurada.",
-  peso: 1
-},
-{
-  q: "Frase em sentido conotativo — característica",
-  r: "Produz efeito expressivo, simbólico ou subjetivo.",
-  peso: 1
-},
-{
-  q: "O que são figuras de linguagem?",
-  r: "Recursos expressivos que alteram o sentido literal para intensificar a mensagem.",
-  peso: 1
-},
-{
-  q: "Metáfora — definição",
-  r: "Comparação implícita entre elementos por semelhança.",
-  peso: 1
-},
-{
-  q: "Metonímia — definição",
-  r: "Substituição de um termo por outro com relação de proximidade.",
-  peso: 1
-},
-{
-  q: "Hipérbole — definição",
-  r: "Exagero intencional para intensificar a ideia.",
-  peso: 1
-},
-{
-  q: "Eufemismo — definição",
-  r: "Suavização de uma expressão considerada dura ou desagradável.",
-  peso: 1
-},
-{
-  q: "Ironia — definição",
-  r: "Expressão de sentido oposto ao literal, geralmente com crítica implícita.",
-  peso: 1
-},
-{
-  q: "Personificação (prosopopeia) — definição",
-  r: "Atribuição de características humanas a seres inanimados ou abstratos.",
-  peso: 1
-},
-{
-  q: "Antítese — definição",
-  r: "Aproximação de ideias opostas.",
-  peso: 1
-},
-{
-  q: "Paradoxo — definição",
-  r: "Associação de ideias contraditórias que produzem sentido.",
-  peso: 1
-},
-{
-  q: "O que são homônimos?",
-  r: "Palavras com mesma forma ou som, mas significados diferentes.",
-  peso: 1
-},
-{
-  q: "Homônimos perfeitos — definição",
-  r: "Mesma grafia e mesma pronúncia, com sentidos diferentes.",
-  peso: 1
-},
-{
-  q: "Homófonos — definição",
-  r: "Mesma pronúncia e grafia diferente.",
-  peso: 1
-},
-{
-  q: "Homógrafos — definição",
-  r: "Mesma grafia e pronúncia diferente.",
-  peso: 1
-},
-{
-  q: "O que são parônimos?",
-  r: "Palavras parecidas na forma e na pronúncia, mas com significados diferentes.",
-  peso: 1
-},
-{
-  q: "Relações de sentido — sinônimos",
-  r: "Palavras com significados semelhantes, mas não necessariamente idênticos.",
-  peso: 1
-},
-{
-  q: "Relações de sentido — antônimos",
-  r: "Palavras com significados opostos.",
-  peso: 1
-}, /* ===== BLOCO 3 — FONOLOGIA E ORTOGRAFIA ===== */
-{
-  q: "O que é sílaba?",
-  r: "Cada emissão sonora que compõe uma palavra.",
-  peso: 1
-},
-{
-  q: "Classificação das palavras quanto ao número de sílabas",
-  r: "Monossílabas, dissílabas, trissílabas e polissílabas.",
-  peso: 1
-},
-{
-  q: "Classificação das palavras quanto à tonicidade",
-  r: "Oxítonas, paroxítonas e proparoxítonas.",
-  peso: 1
-},
-{
-  q: "Oxítona — definição",
-  r: "Palavra cuja última sílaba é a mais forte.",
-  peso: 1
-},
-{
-  q: "Paroxítona — definição",
-  r: "Palavra cuja penúltima sílaba é a mais forte.",
-  peso: 1
-},
-{
-  q: "Proparoxítona — definição",
-  r: "Palavra cuja antepenúltima sílaba é a mais forte.",
-  peso: 1
-},
-{
-  q: "O que é ditongo?",
-  r: "Encontro de vogal com semivogal na mesma sílaba.",
-  peso: 1
-},
-{
-  q: "O que é tritongo?",
-  r: "Encontro de semivogal + vogal + semivogal na mesma sílaba.",
-  peso: 1
-},
-{
-  q: "O que é hiato?",
-  r: "Encontro de duas vogais em sílabas diferentes.",
-  peso: 1
-},
-{
-  q: "O que é dígrafo?",
-  r: "Encontro de duas letras que representam um único fonema.",
-  peso: 1
-},
-{
-  q: "Exemplos de dígrafos consonantais",
-  r: "ch, lh, nh, rr, ss, qu, gu (quando representam um som).",
-  peso: 1
-},
-{
-  q: "Acentuação das palavras proparoxítonas",
-  r: "Todas as proparoxítonas são acentuadas.",
-  peso: 1
-},
-{
-  q: "Acentuação das oxítonas — regra geral",
-  r: "Acentuam-se quando terminam em a(s), e(s), o(s), em(ens).",
-  peso: 1
-},
-{
-  q: "Acentuação das paroxítonas — regra geral",
-  r: "Acentuam-se quando NÃO terminam em a(s), e(s), o(s), em(ens).",
-  peso: 1
-},
-{
-  q: "Uso do acento diferencial — conceito",
-  r: "Diferencia palavras de mesma grafia e pronúncia semelhante.",
-  peso: 1
-},
-{
-  q: "Uso do hífen — regra geral",
-  r: "Emprega-se para ligar prefixos a palavras, conforme regras específicas.",
-  peso: 1
-},
-{
-  q: "Hífen com prefixo terminado em vogal",
-  r: "Usa-se hífen se a segunda palavra começar com a mesma vogal.",
-  peso: 1
-},
-{
-  q: "Hífen com prefixo terminado em consoante",
-  r: "Usa-se hífen se a segunda palavra começar com a mesma consoante.",
-  peso: 1
-},
-{
-  q: "O que são normas ortográficas?",
-  r: "Conjunto de regras que padronizam a escrita da língua.",
-  peso: 1
-},
-/* ===== BLOCO 4 — MORFOLOGIA ===== */
-{
-  q: "O que estuda a morfologia?",
-  r: "Estuda a estrutura, a formação e a classificação das palavras.",
-  peso: 1
-},
-{
-  q: "O que são classes de palavras?",
-  r: "Categorias que agrupam palavras conforme suas funções e características.",
-  peso: 1
-},
-{
-  q: "Quais são as classes gramaticais?",
-  r: "Substantivo, adjetivo, artigo, numeral, pronome, verbo, advérbio, preposição, conjunção e interjeição.",
-  peso: 1
-},
-{
-  q: "Substantivo — definição",
-  r: "Palavra que nomeia seres, objetos, lugares, sentimentos ou ideias.",
-  peso: 1
-},
-{
-  q: "Adjetivo — definição",
-  r: "Palavra que caracteriza ou qualifica o substantivo.",
-  peso: 1
-},
-{
-  q: "Artigo — definição",
-  r: "Palavra que antecede o substantivo, determinando-o ou indeterminando-o.",
-  peso: 1
-},
-{
-  q: "Pronome — definição",
-  r: "Palavra que substitui ou acompanha o substantivo.",
-  peso: 1
-},
-{
-  q: "Numeral — definição",
-  r: "Palavra que indica quantidade, ordem, multiplicação ou fração.",
-  peso: 1
-},
-{
-  q: "Verbo — definição",
-  r: "Palavra que indica ação, estado ou fenômeno da natureza.",
-  peso: 1
-},
-{
-  q: "Advérbio — definição",
-  r: "Palavra que modifica o verbo, o adjetivo ou outro advérbio.",
-  peso: 1
-},
-{
-  q: "Preposição — definição",
-  r: "Palavra invariável que liga termos da oração.",
-  peso: 1
-},
-{
-  q: "Conjunção — definição",
-  r: "Palavra invariável que liga orações ou termos semelhantes.",
-  peso: 1
-},
-{
-  q: "Interjeição — definição",
-  r: "Palavra que expressa emoções, sentimentos ou reações.",
-  peso: 1
-},
-{
-  q: "O que é formação de palavras?",
-  r: "Processo pelo qual novas palavras são criadas a partir de outras.",
-  peso: 1
-},
-{
-  q: "Derivação — definição",
-  r: "Formação de palavra a partir de outra por acréscimo de afixos.",
-  peso: 1
-},
-{
-  q: "Derivação prefixal",
-  r: "Formação de palavra com acréscimo de prefixo.",
-  peso: 1
-},
-{
-  q: "Derivação sufixal",
-  r: "Formação de palavra com acréscimo de sufixo.",
-  peso: 1
-},
-{
-  q: "Derivação parassintética",
-  r: "Uso simultâneo de prefixo e sufixo.",
-  peso: 1
-},
-{
-  q: "Derivação regressiva",
-  r: "Formação de palavra por redução da forma primitiva.",
-  peso: 1
-},
-{
-  q: "Composição — definição",
-  r: "Formação de palavra pela união de dois ou mais radicais.",
-  peso: 1
-},
-{
-  q: "Composição por justaposição",
-  r: "União de palavras sem alteração fonética.",
-  peso: 1
-},
-{
-  q: "Composição por aglutinação",
-  r: "União de palavras com alteração fonética.",
-  peso: 1
-},
-{
-  q: "O que é flexão nominal?",
-  r: "Variação do substantivo e do adjetivo em gênero e número.",
-  peso: 1
-},
-{
-  q: "O que é flexão verbal?",
-  r: "Variação do verbo em pessoa, número, tempo e modo.",
-  peso: 1
-}, /* ===== BLOCO 5 — SINTAXE I (TERMOS DA ORAÇÃO) ===== */
-{
-  q: "O que estuda a sintaxe?",
-  r: "Estuda a função e a relação das palavras dentro da frase e do período.",
-  peso: 1
-},
-{
-  q: "O que é frase?",
-  r: "Enunciado com sentido completo, podendo ou não conter verbo.",
-  peso: 1
-},
-{
-  q: "O que é oração?",
-  r: "Enunciado que possui verbo ou locução verbal.",
-  peso: 1
-},
-{
-  q: "O que é período?",
-  r: "Frase organizada em uma ou mais orações.",
-  peso: 1
-},
-{
-  q: "O que é período simples?",
-  r: "Período formado por apenas uma oração.",
-  peso: 1
-},
-{
-  q: "O que é período composto?",
-  r: "Período formado por duas ou mais orações.",
-  peso: 1
-},
-{
-  q: "Sujeito — definição",
-  r: "Termo da oração sobre o qual se declara algo.",
-  peso: 1
-},
-{
-  q: "Sujeito simples",
-  r: "Possui apenas um núcleo.",
-  peso: 1
-},
-{
-  q: "Sujeito composto",
-  r: "Possui dois ou mais núcleos.",
-  peso: 1
-},
-{
-  q: "Sujeito oculto",
-  r: "Não aparece expresso, mas é identificado pela desinência verbal.",
-  peso: 1
-},
-{
-  q: "Sujeito indeterminado",
-  r: "Não se identifica o agente da ação.",
-  peso: 1
-},
-{
-  q: "Sujeito inexistente",
-  r: "Ocorre em verbos impessoais, como haver e fazer indicando tempo.",
-  peso: 1
-},
-{
-  q: "Predicado — definição",
-  r: "Tudo aquilo que se declara sobre o sujeito.",
-  peso: 1
-},
-{
-  q: "Predicado verbal",
-  r: "Tem como núcleo um verbo de ação.",
-  peso: 1
-},
-{
-  q: "Predicado nominal",
-  r: "Tem como núcleo um nome, ligado ao sujeito por verbo de ligação.",
-  peso: 1
-},
-{
-  q: "Predicado verbo-nominal",
-  r: "Possui dois núcleos: um verbo e um nome.",
-  peso: 1
-},
-{
-  q: "Verbo de ligação",
-  r: "Liga o sujeito a uma característica (ser, estar, parecer, permanecer).",
-  peso: 1
-},
-{
-  q: "Predicativo do sujeito",
-  r: "Termo que atribui característica ao sujeito.",
-  peso: 1
-},
-{
-  q: "Predicativo do objeto",
-  r: "Termo que atribui característica ao objeto.",
-  peso: 1
-}, 
-   /* ===== BLOCO 6 — SINTAXE II (PERÍODO COMPOSTO) ===== */
-{
-  q: "O que estuda a Sintaxe II?",
-  r: "Estuda as relações entre orações no período composto.",
-  peso: 1
-},
-{
-  q: "O que é período composto?",
-  r: "Período formado por duas ou mais orações.",
-  peso: 1
-},
-{
-  q: "O que é coordenação?",
-  r: "Relação entre orações independentes sintaticamente.",
-  peso: 1
-},
-{
-  q: "Orações coordenadas — tipos",
-  r: "Aditivas, adversativas, alternativas, conclusivas e explicativas.",
-  peso: 1
-},
-{
-  q: "Orações coordenadas aditivas",
-  r: "Expressam soma ou adição (e, nem).",
-  peso: 1
-},
-{
-  q: "Orações coordenadas adversativas",
-  r: "Expressam oposição (mas, porém, contudo).",
-  peso: 1
-},
-{
-  q: "Orações coordenadas alternativas",
-  r: "Expressam alternância (ou, ora...ora).",
-  peso: 1
-},
-{
-  q: "Orações coordenadas conclusivas",
-  r: "Expressam conclusão (logo, portanto).",
-  peso: 1
-},
-{
-  q: "Orações coordenadas explicativas",
-  r: "Expressam explicação (porque, pois).",
-  peso: 1
-},
-{
-  q: "O que é subordinação?",
-  r: "Relação em que uma oração depende sintaticamente da outra.",
-  peso: 1
-},
-{
-  q: "Orações subordinadas — tipos",
-  r: "Substantivas, adjetivas e adverbiais.",
-  peso: 1
-},
-{
-  q: "Orações subordinadas substantivas",
-  r: "Exercem função de substantivo.",
-  peso: 1
-},
-{
-  q: "Orações subordinadas adjetivas",
-  r: "Exercem função de adjetivo.",
-  peso: 1
-},
-{
-  q: "Orações subordinadas adverbiais",
-  r: "Exercem função de advérbio.",
-  peso: 1
-},
-{
-  q: "Orações subordinadas adjetivas restritivas",
-  r: "Restringem o sentido do substantivo, sem uso de vírgulas.",
-  peso: 1
-},
-{
-  q: "Orações subordinadas adjetivas explicativas",
-  r: "Explicam o substantivo, com uso de vírgulas.",
-  peso: 1
-},
-{
-  q: "Orações subordinadas adverbiais — tipos",
-  r: "Causais, condicionais, concessivas, finais, temporais, comparativas, consecutivas.",
-  peso: 1
-},
-{
-  q: "Valor semântico das conjunções",
-  r: "Determina o sentido da relação entre as orações.",
-  peso: 1
-    } 
+  portugues: [
+    {
+      q: "O que é compreensão textual?",
+      d: "Procure informações explícitas no texto.",
+      r: "É a capacidade de identificar informações explícitas presentes no texto.",
+      peso: 1
+    }
   ]
 };
 
@@ -828,12 +228,19 @@ function mostrarResposta() {
   document.getElementById("resposta").classList.remove("hidden");
 }
 
+function mostrarDica() {
+  const dica = lista[atual].d;
+  if (!dica) {
+    alert("Este card não possui dica 😊");
+    return;
+  }
+  alert("💡 Dica: " + dica);
+}
+
 function marcar(acertou) {
   if (acertou) {
     stats.acertos++;
-    if (modoErro) {
-      erros.splice(atual, 1);
-    }
+    if (modoErro) erros.splice(atual, 1);
   } else {
     stats.erros++;
     erros.push(lista[atual]);
@@ -841,6 +248,13 @@ function marcar(acertou) {
   }
   salvar();
   proximo();
+}
+
+function pular() {
+  const card = lista.splice(atual, 1)[0];
+  lista.push(card);
+  if (atual >= lista.length) atual = 0;
+  atualizar();
 }
 
 function proximo() {
@@ -876,31 +290,14 @@ function revisarErros() {
     alert("Nenhum erro para revisar 🎉");
     return;
   }
-
   modoErro = true;
   lista = [...erros];
   atual = 0;
-
   document.getElementById("menu").classList.add("hidden");
   document.getElementById("flash").classList.remove("hidden");
-
-  atualizar();
-}
-  
-function pular() {
-  // move o card atual para o final da lista
-  const atualCard = lista.splice(atual, 1)[0];
-  lista.push(atualCard);
-
-  // se passou do tamanho, volta ao início
-  if (atual >= lista.length) {
-    atual = 0;
-  }
-
   atualizar();
 }
 </script>
 
 </body>
 </html>
-
