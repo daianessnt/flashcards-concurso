@@ -160,6 +160,8 @@ button.secondary { background: #6c757d; }
   <div class="stats" id="stats"></div>
 
   <button class="secondary" onclick="voltar()">Voltar ao menu</button>
+  <button class="secondary" onclick="zerarProgresso()">Zerar acertos e erros</button>
+
 </div>
 
 </div>
@@ -279,6 +281,17 @@ function atualizarStats() {
 
 function salvar() {
   localStorage.setItem("stats", JSON.stringify(stats));
+}
+
+function zerarProgresso() {
+  if (confirm("Tem certeza que deseja zerar acertos, erros e revisões?")) {
+    stats = { acertos: 0, erros: 0 };
+    errosSalvos = [];
+    localStorage.removeItem("stats");
+    localStorage.removeItem("erros");
+    atualizarStats();
+    alert("Progresso zerado com sucesso ✅");
+  }
 }
 
 function voltar() {
