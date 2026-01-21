@@ -218,12 +218,358 @@ atualizarIcone();
 
 const flashcards = {
   portugues: [
-    {
-      q: "O que é compreensão textual?",
-      d: "Observe o que está explícito no texto.",
-      r: "É a capacidade de identificar informações explícitas presentes no texto."
-    }
-  ]
+  {
+    "q": "Qual a regra de concordância para o verbo 'Haver' no sentido de existir?",
+    "d": "Lembre-se de que ele é um verbo impessoal.",
+    "r": "Ele deve permanecer sempre no singular (Ex: Houve muitos aprovados)."
+  },
+  {
+    "q": "Como fica a concordância de 'Fazer' indicando tempo decorrido?",
+    "d": "Pense se você diria 'fazem dias' ou 'faz dias'.",
+    "r": "Permanece sempre no singular (Ex: Faz dois anos que estudo)."
+  },
+  {
+    "q": "O que ocorre na estrutura 'Vende-se casas'?",
+    "d": "O verbo é Transitivo Direto. O 'se' é partícula apassivadora.",
+    "r": "Está incorreto. O correto é 'Vendem-se casas', pois o verbo concorda com o sujeito 'casas'."
+  },
+  {
+    "q": "Qual a regra para 'Precisa-se de técnicos'?",
+    "d": "O verbo tem preposição (Transitivo Indireto). O 'se' indica sujeito indeterminado.",
+    "r": "Correto. Com preposição, o verbo fica obrigatoriamente no singular."
+  },
+  {
+    "q": "O que é Sujeito Inexistente?",
+    "d": "Ocorre com verbos que não possuem um agente (fenômenos ou haver/fazer).",
+    "r": "É a oração composta apenas por predicado, sem um termo que execute a ação."
+  },
+  {
+    "q": "Diferença entre Objeto Direto e Indireto.",
+    "d": "Observe a presença ou ausência de preposição.",
+    "r": "O Direto liga-se ao verbo sem preposição; o Indireto exige preposição."
+  },
+  {
+    "q": "Concordância com expressões partitivas (ex: 'A maioria de').",
+    "d": "O verbo pode concordar com o núcleo ou com o especificador.",
+    "r": "O verbo pode ficar no singular ou no plural (Ex: A maioria passou/passaram)."
+  },
+  {
+    "q": "O que é um Predicado Nominal?",
+    "d": "Foque no verbo de ligação e na característica do sujeito.",
+    "r": "É aquele cujo núcleo é um nome (predicativo), ligado ao sujeito por um verbo de ligação."
+  },
+  {
+    "q": "Regra do Sujeito Composto antes do verbo.",
+    "d": "Pense na soma dos núcleos.",
+    "r": "O verbo deve ir obrigatoriamente para o plural."
+  },
+  {
+    "q": "Sujeito Oculto (Elíptico).",
+    "d": "Identificável pela terminação do verbo ou contexto.",
+    "r": "É aquele que não está expresso na frase, mas pode ser deduzido (Ex: 'Fomos' -> Nós)."
+  },
+  {
+    "q": "O que é Derivação Parassintética?",
+    "d": "Pense no acréscimo simultâneo de prefixo e sufixo.",
+    "r": "É a formação de uma palavra pela junção de prefixo e sufixo onde, se um for retirado, a palavra deixa de existir."
+  },
+  {
+    "q": "Qual a diferença entre Compreensão e Interpretação?",
+    "d": "Um está no texto, o outro está além do texto.",
+    "r": "Compreensão foca em dados explícitos; Interpretação foca em conclusões e inferências (implícitos)."
+  },
+  {
+    "q": "O que caracteriza uma palavra Proparoxítona?",
+    "d": "Observe a posição da sílaba tônica (antepenúltima).",
+    "r": "É a palavra cuja antepenúltima sílaba é tônica. Regra: Todas são acentuadas."
+  },
+  {
+    "q": "Definição de Dígrafo.",
+    "d": "Duas letras, mas quantos sons?",
+    "r": "É o encontro de duas letras que representam um único som (fonema)."
+  },
+  {
+    "q": "O que é um Ditongo Crescente?",
+    "d": "A sequência é semivogal + vogal.",
+    "r": "É o encontro de uma semivogal (som mais fraco) seguido de uma vogal (som mais forte) na mesma sílaba."
+  },
+  {
+    "q": "O que é Derivação Regressiva?",
+    "d": "Geralmente transforma verbos em substantivos.",
+    "r": "Ocorre quando uma palavra é reduzida em sua forma morfológica, como em 'atacar' para 'ataque'."
+  },
+  {
+    "q": "Sentido Denotativo.",
+    "d": "Lembre-se do 'D' de Dicionário.",
+    "r": "É o uso da palavra em seu sentido literal, real e objetivo."
+  },
+  {
+    "q": "Sentido Conotativo.",
+    "d": "Lembre-se do 'C' de Criatividade.",
+    "r": "É o uso da palavra em sentido figurado, simbólico ou subjetivo."
+  },
+  {
+    "q": "O que é um Hiato?",
+    "d": "Duas vogais vizinhas, mas em sílabas diferentes.",
+    "r": "É o encontro de duas vogais que, na separação silábica, ficam em sílabas distintas."
+  },
+  {
+    "q": "Regra das Oxítonas acentuadas.",
+    "d": "Terminações A, E, O, EM, ENS.",
+    "r": "Acentuam-se as oxítonas terminadas em A, E, O (seguidas ou não de S), EM e ENS."
+  },
+  {
+    "q": "O que mudou em 'Ideia' com o Novo Acordo?",
+    "d": "É uma paroxítona com ditongo aberto.",
+    "r": "Perdeu o acento, pois paroxítonas com ditongos abertos (ei, oi) não são mais acentuadas."
+  },
+  {
+    "q": "O que é Derivação Imprópria?",
+    "r": "É a mudança da classe gramatical de uma palavra sem alterar sua forma (ex: o jantar).",
+    "d": "Ocorre muito com o uso de artigos antes de verbos."
+  },
+  {
+    "q": "O que é Composição por Aglutinação?",
+    "d": "Ocorre perda de elementos fonéticos.",
+    "r": "É a união de dois radicais onde pelo menos um sofre alteração em seu som ou grafia (ex: planalto)."
+  },
+  {
+    "q": "O que é Composição por Justaposição?",
+    "d": "Os radicais se unem sem perdas.",
+    "r": "É a união de radicais que mantêm sua integridade sonora e gráfica (ex: passatempo)."
+  },
+  {
+    "q": "O que é um Verbo de Ligação?",
+    "d": "Ser, estar, parecer, ficar...",
+    "r": "Verbo que não indica ação, mas liga o sujeito a um estado ou qualidade (predicativo)."
+  },
+  {
+    "q": "O que é Sujeito Composto?",
+    "d": "Conte os núcleos principais.",
+    "r": "É o sujeito que apresenta dois ou mais núcleos de igual importância na oração."
+  },
+  {
+    "q": "Função do Advérbio.",
+    "d": "Modifica verbo, adjetivo ou outro advérbio.",
+    "r": "Palavra invariável que indica uma circunstância (tempo, modo, lugar, etc.)."
+  },
+  {
+    "q": "O que é uma Preposição?",
+    "d": "A, com, de, em, para...",
+    "r": "Palavra invariável que liga dois termos, criando uma relação de subordinação entre eles."
+  },
+  {
+    "q": "Variação Linguística Diatópica.",
+    "d": "Relacionada ao 'topo' (lugar).",
+    "r": "É a variação que ocorre de acordo com a região geográfica do falante."
+  },
+  {
+    "q": "O que é um Texto Injuntivo?",
+    "d": "Manuais, receitas, editais.",
+    "r": "Texto que tem como objetivo instruir, orientar ou dar ordens ao leitor."
+  },
+  {
+    "q": "O que é o Predicativo do Sujeito?",
+    "d": "É uma característica que aparece no predicado.",
+    "r": "É o termo que atribui uma qualidade ou estado ao sujeito, geralmente por meio de um verbo de ligação."
+  },
+  {
+    "q": "Regra do acento em 'Saúde' e 'Saída'.",
+    "d": "Regra do Hiato tônico.",
+    "r": "Acentuam-se o I e U tônicos em hiato, sozinhos na sílaba (ou com S), sem NH na sequência."
+  },
+  {
+    "q": "Acento Diferencial: 'Pôr' vs 'Por'.",
+    "d": "Um é verbo, o outro é preposição.",
+    "r": "O acento circunflexo permanece no verbo 'pôr' para diferenciá-lo da preposição 'por'."
+  },
+  {
+    "q": "Concordância de 'Têm' (com acento).",
+    "d": "Indica pluralidade.",
+    "r": "O acento circunflexo é usado na 3ª pessoa do plural do presente do indicativo dos verbos ter e vir."
+  },
+  {
+    "q": "O que é um Pronome Relativo?",
+    "d": "Retoma um termo anterior.",
+    "r": "É a palavra que substitui um substantivo anterior, ligando duas orações (ex: o qual, que, cujo)."
+  },
+  {
+    "q": "O que é um Verbo Transitivo Indireto?",
+    "d": "Exige uma preposição.",
+    "r": "É o verbo que necessita de um complemento acompanhado obrigatoriamente de preposição."
+  },
+  {
+    "q": "Diferença entre Encontro Consonantal e Dígrafo.",
+    "d": "Um você ouve dois sons, no outro apenas um.",
+    "r": "No encontro ouvem-se todas as consoantes; no dígrafo, as duas letras formam um único som."
+  },
+  {
+    "q": "O que é Tipologia Dissertativa-Argumentativa?",
+    "d": "Defesa de uma tese.",
+    "r": "Texto que busca convencer o leitor por meio de argumentos e defesa de um ponto de vista."
+  },
+  {
+    "q": "O que é Variação Diafásica?",
+    "d": "Depende da situação ou contexto.",
+    "r": "É a variação de registro, alternando entre linguagem formal e informal conforme a situação."
+  },
+  {
+    "q": "O que é uma Paroxítona?",
+    "d": "Sílaba tônica é a penúltima.",
+    "r": "Palavra cuja penúltima sílaba é a mais forte. Regra: Acentua-se se NÃO terminar em A, E, O, EM, ENS."
+  },
+    [
+  {
+    "q": "Pode-se separar Sujeito e Verbo com vírgula?",
+    "d": "Pense na estrutura básica da oração.",
+    "r": "Nunca. É proibido separar os termos essenciais da oração (sujeito, verbo e complementos) com vírgula."
+  },
+  {
+    "q": "Regência do verbo 'Assistir' (ver/presenciar).",
+    "d": "Ele exige preposição ou não?",
+    "r": "Exige a preposição 'A'. Ex: Assistimos à palestra (e não 'a palestra')."
+  },
+  {
+    "q": "Regência do verbo 'Visar' (objetivar/pretender).",
+    "d": "Cuidado com o uso da preposição.",
+    "r": "Exige a preposição 'A'. Ex: Visamos ao cargo público (e não 'o cargo')."
+  },
+  {
+    "q": "O que é um Adjunto Adverbial deslocado?",
+    "d": "Quando a indicação de tempo/lugar vem no início da frase.",
+    "r": "É quando a circunstância é colocada fora da ordem direta. Se for longo, a vírgula é obrigatória."
+  },
+  {
+    "q": "Regra da vírgula em enumerações.",
+    "d": "Ex: Comprei pão, leite, café...",
+    "r": "A vírgula é obrigatória para separar elementos de mesma função sintática em uma lista."
+  },
+  {
+    "q": "O que é o Aposto Explicativo?",
+    "d": "Uma explicação sobre um termo anterior.",
+    "r": "É um termo que esclarece um substantivo e deve vir isolado por vírgulas (Ex: Pelé, o rei do futebol, nasceu em Minas)."
+  },
+  {
+    "q": "Regência do verbo 'Chegar'.",
+    "d": "Você chega 'em' ou chega 'a'?",
+    "r": "Na norma culta, chega-se 'A' algum lugar. Ex: Cheguei ao trabalho (e não 'no trabalho')."
+  },
+  {
+    "q": "Uso da vírgula antes do 'Mas'.",
+    "d": "Conjunção adversativa.",
+    "r": "A vírgula é obrigatória antes de conjunções adversativas (mas, porém, contudo, todavia)."
+  },
+  {
+    "q": "O que é o Vocativo?",
+    "d": "Um chamamento.",
+    "r": "É o termo usado para chamar o interlocutor. Deve ser sempre isolado por vírgula (Ex: Maria, venha aqui!)."
+  },
+  {
+    "q": "Regência do verbo 'Esquecer' (sem pronome).",
+    "d": "Ex: Esqueci ___ livro.",
+    "r": "Sem o pronome 'se', o verbo não aceita preposição. Ex: Esqueci o livro."
+  },
+  {
+    "q": "Regência do verbo 'Esquecer-se' (com pronome).",
+    "d": "Ex: Esqueci-me ___ livro.",
+    "r": "Com o pronome 'se', a preposição 'de' torna-se obrigatória. Ex: Esqueci-me do livro."
+  },
+  {
+    "q": "Vírgula antes da conjunção 'E'.",
+    "d": "Geralmente não se usa, mas há uma exceção.",
+    "r": "Usa-se quando os sujeitos das orações ligadas pelo 'E' são diferentes."
+  },
+  {
+    "q": "O que são Termos Acessórios?",
+    "d": "Podem ser retirados sem destruir a frase.",
+    "r": "São o Adjunto Adnominal, Adjunto Adverbial e o Aposto."
+  },
+  {
+    "q": "Função do Objeto Direto Preposicionado.",
+    "d": "Ocorre para evitar ambiguidade ou por ênfase.",
+    "r": "É quando um verbo que não exige preposição a recebe por estilo (Ex: Beber do vinho)."
+  },
+  {
+    "q": "O que é Complemento Nominal?",
+    "d": "Completa um nome (substantivo, adjetivo ou advérbio).",
+    "r": "Termo preposicionado que completa o sentido de um nome que não tem sentido completo sozinho."
+  },
+  {
+    "q": "Diferença entre Adjunto Adnominal e Complemento Nominal.",
+    "d": "O CN tem valor passivo; o AA tem valor ativo/posse.",
+    "r": "CN completa substantivo abstrato/adjetivo/advérbio; AA caracteriza ou determina o substantivo."
+  },
+  {
+    "q": "O que é Agente da Passiva?",
+    "d": "Quem faz a ação na voz passiva.",
+    "r": "Termo que executa a ação quando o verbo está na voz passiva (Ex: A prova foi feita PELO ALUNO)."
+  },
+  {
+    "q": "Uso do 'Onde' vs 'Aonde'.",
+    "d": "Pense em movimento ou estática.",
+    "r": "'Onde' para lugares fixos; 'Aonde' com verbos que indicam movimento (ir, chegar, levar)."
+  },
+  {
+    "q": "Regência do verbo 'Preferir'.",
+    "d": "Prefiro isso ___ aquilo.",
+    "r": "Prefere-se algo 'A' outra coisa. É errado dizer 'do que'. Ex: Prefiro estudar a dormir."
+  },
+  {
+    "q": "O que são Orações Coordenadas Assindéticas?",
+    "d": "Não possuem conjunção.",
+    "r": "Orações ligadas apenas por pontuação (vírgula), sem conectivos."
+  },
+  {
+    "q": "Uso do Ponto e Vírgula.",
+    "d": "Pausa maior que a vírgula e menor que o ponto.",
+    "r": "Usado para separar itens de uma enumeração ou orações longas que já possuem vírgulas internas."
+  },
+  {
+    "q": "Função dos Dois-pontos.",
+    "d": "Anunciam algo.",
+    "r": "Usados para iniciar uma fala, uma explicação, um resumo ou uma enumeração."
+  },
+  {
+    "q": "O que é uma Oração Intercalada?",
+    "d": "Uma frase 'metida' no meio da outra.",
+    "r": "Frase que interrompe a oração principal para introduzir uma observação; deve vir entre vírgulas ou travessões."
+  },
+  {
+    "q": "Uso do Travessão.",
+    "d": "Pode substituir a vírgula em alguns casos.",
+    "r": "Usado para destacar informações ou substituir as vírgulas em apostos explicativos para dar ênfase."
+  },
+  {
+    "q": "Regência de 'Implicar' (sentido de resultar).",
+    "d": "Ex: Isso implica ___ gastos.",
+    "r": "É transitivo direto: não aceita a preposição 'em'. Ex: Isso implica gastos."
+  },
+  {
+    "q": "O que é Predicativo do Objeto?",
+    "d": "Atribui característica ao objeto.",
+    "r": "Termo que dá uma qualidade ao objeto direto ou indireto (Ex: Considero o técnico inteligente)."
+  },
+  {
+    "q": "Regência de 'Aspirar' (sentido de cheirar).",
+    "d": "Ex: Aspirou ___ perfume.",
+    "r": "Nesse sentido é Transitivo Direto (sem preposição). Ex: Aspirou o perfume."
+  },
+  {
+    "q": "Regência de 'Aspirar' (sentido de desejar).",
+    "d": "Ex: Aspira ___ cargo.",
+    "r": "Nesse sentido exige a preposição 'A'. Ex: Aspira ao cargo."
+  },
+  {
+    "q": "O que é uma Oração Explicativa?",
+    "d": "Sempre vem entre vírgulas.",
+    "r": "Oração que adiciona uma informação acessória sobre o antecedente, separada obrigatoriamente por vírgulas."
+  },
+  {
+    "q": "O que é uma Oração Restritiva?",
+    "d": "Nunca vem entre vírgulas.",
+    "r": "Oração que limita o sentido do antecedente, sendo essencial para a compreensão da frase."
+  }
+]
 };
 
 let lista = [];
@@ -308,3 +654,4 @@ function voltar() {
 
 </body>
 </html>
+
