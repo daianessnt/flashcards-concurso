@@ -156,6 +156,7 @@ button.secondary { background: #6c757d; }
 
   <div id="stats" class="stats"></div>
   <button class="secondary" onclick="voltarMenu()">Voltar ao menu</button>
+  <button class="secondary" onclick="zerarProgresso()"> 🔄 Zerar acertos e erros </button>
 </div>
 
 </div>
@@ -164,10 +165,13 @@ button.secondary { background: #6c757d; }
 /* ================= TEMA ================= */
 function toggleTheme(){
   document.body.classList.toggle("dark");
-  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+  localStorage.setItem("theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
 }
-if(localStorage.getItem("theme")==="dark") document.body.classList.add("dark");
-
+if(localStorage.getItem("theme")==="dark")
+  document.body.classList.add("dark");
+  
 /* ================= DADOS ================= */
 const flashcards = {
   portugues: [
@@ -592,72 +596,133 @@ const flashcards = {
   ]
 };
 
-let lista=[], atual=0, historico=[];
+let lista = [];
+let atual = 0;
+let historico = [];
+
 let errosSalvos = JSON.parse(localStorage.getItem("erros")) || [];
-let stats = JSON.parse(localStorage.getItem("stats")) || { acertos:0, erros:0 };
+let stats = JSON.parse(localStorage.getItem("stats")) || { acertos: 0, erros: 0 };
 
 /* ================= FUNÇÕES ================= */
 function iniciar(m){
-  lista=[...flashcards[m]];
-  atual=0; historico=[];
+  lista = [...flashcards[m]];
+  atual = 0;
+  historico = [];
+
+  // 👉 se quiser resetar stats a cada estudo, descomente:
+  // stats = { acertos: 0, erros: 0 };
+  // salvar();
+
   menu.classList.add("hidden");
   flash.classList.remove("hidden");
   atualizar();
 }
 
 function atualizar(){
-  const c=lista[atual];
-  pergunta.innerText=c.q;
-  dica.innerText=c.d||"";
-  resposta.innerText=c.r;
+  const c = lista[atual];
+  pergunta.innerText = c.q;
+  dica.innerText = c.d || "";
+  resposta.innerText = c.r;
+
   dica.classList.add("hidden");
   resposta.classList.add("hidden");
-  stats.innerText=`Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
+
+  atualizarStats();
 }
 
-function mostrarDica(){ dica.classList.toggle("hidden"); }
-function mostrarResposta(){ resposta.classList.remove("hidden"); }
+function atualizarStats(){
+  statsEl.innerText = `Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
+}
+
+function mostrarDica(){
+  dica.classList.toggle("hidden");
+}
+
+function mostrarResposta(){
+  resposta.classList.remove("hidden");
+}
 
 function marcar(ok){
   historico.push(atual);
-  ok ? stats.acertos++ : (stats.erros++, errosSalvos.push(lista[atual]));
+
+  if(ok){
+    stats.acertos++;
+  } else {
+    stats.erros++;
+    errosSalvos.push(lista[atual]);
+  }
+
   salvar();
-  atual=(atual+1)%lista.length;
+
+  atual++;
+  if(atual >= lista.length) atual = 0;
+
   atualizar();
 }
 
 function pular(){
   historico.push(atual);
-  lista.push(lista.splice(atual,1)[0]);
+
+  atual++;
+  if(atual >= lista.length) atual = 0;
+
   atualizar();
 }
 
 function voltarFlash(){
   if(!historico.length) return;
-  atual=historico.pop();
+
+  atual = historico.pop();
   atualizar();
 }
 
 function revisarErros(){
-  if(!errosSalvos.length) return alert("Sem erros 🎉");
-  lista=[...errosSalvos];
-  atual=0; historico=[];
+  if(!errosSalvos.length){
+    alert("Sem erros 🎉");
+    return;
+  }
+
+  lista = [...errosSalvos];
+  atual = 0;
+  historico = [];
+
   menu.classList.add("hidden");
   flash.classList.remove("hidden");
   atualizar();
 }
 
 function salvar(){
-  localStorage.setItem("stats",JSON.stringify(stats));
-  localStorage.setItem("erros",JSON.stringify(errosSalvos));
+  localStorage.setItem("stats", JSON.stringify(stats));
+  localStorage.setItem("erros", JSON.stringify(errosSalvos));
 }
 
 function voltarMenu(){
   flash.classList.add("hidden");
   menu.classList.remove("hidden");
 }
+
+function zerarProgresso(){
+
+  stats = { acertos: 0, erros: 0 };
+  errosSalvos = [];
+
+  localStorage.removeItem("stats");
+  localStorage.removeItem("erros");
+
+  atualizar();
+}
+
+
+/* ================= FIX IDs ================= */
+const pergunta = document.getElementById("pergunta");
+const dica = document.getElementById("dica");
+const resposta = document.getElementById("resposta");
+const statsEl = document.getElementById("stats");
+const menu = document.getElementById("menu");
+const flash = document.getElementById("flash");
 </script>
 
 </body>
 </html>
+
 
