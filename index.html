@@ -6,7 +6,6 @@
 <title>Flashcards Concurso</title>
 
 <style>
-/* ================= TEMA CLARO (PADRÃO) ================= */
 :root {
   --bg: #f6f8fb;
   --card: #ffffff;
@@ -18,7 +17,6 @@
   --text: #2b2b2b;
 }
 
-/* ================= TEMA ESCURO ================= */
 body.dark {
   --bg: #121417;
   --card: #1e2228;
@@ -39,7 +37,6 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  transition: background 0.3s, color 0.3s;
 }
 
 header {
@@ -51,18 +48,16 @@ header {
   position: relative;
 }
 
-/* BOTÃO MODO ESCURO */
 .toggle-theme {
   position: absolute;
   right: 1rem;
   top: 0.8rem;
-  background: rgba(255,255,255,0.2);
   border: none;
   border-radius: 50%;
   width: 42px;
   height: 42px;
   font-size: 1.2rem;
-  cursor: pointer;
+  background: rgba(255,255,255,0.2);
   color: white;
 }
 
@@ -72,81 +67,58 @@ header {
   padding: 1rem;
 }
 
-/* BOTÕES */
 button {
   width: 100%;
   min-height: 48px;
-  padding: 0.9rem;
   margin: 0.4rem 0;
   border: none;
   border-radius: 12px;
   font-size: 1rem;
-  cursor: pointer;
   color: white;
   background: var(--primary);
-  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
-button:active { transform: scale(0.97); }
 
 button.success { background: var(--success); }
 button.error { background: var(--error); }
-button.warning { background: var(--warning); }
+button.warning { background: var(--warning); color:#000; }
 button.secondary { background: #6c757d; }
 
-/* AÇÕES */
 .actions {
   display: flex;
   gap: 0.6rem;
-  margin-top: 0.5rem;
 }
 
 .actions button {
   flex: 1;
-  font-size: 1.4rem;
-  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-/* CARD */
 .card {
   background: var(--card);
   border-radius: 16px;
   padding: 1.6rem;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
 }
 
-.pergunta {
-  font-size: 1.2rem;
-  text-align: center;
-}
-
+.pergunta { font-size: 1.2rem; text-align: center; }
 .dica {
   margin-top: 1rem;
-  font-size: 1.05rem;
   color: var(--tip);
-  background: rgba(124, 92, 255, 0.15);
-  padding: 0.8rem;
+  background: rgba(124,92,255,.15);
+  padding: .8rem;
   border-radius: 10px;
   text-align: center;
 }
-
 .resposta {
   margin-top: 1rem;
-  font-size: 1.1rem;
   color: var(--success);
-  background: rgba(47, 143, 91, 0.15);
-  padding: 0.8rem;
+  background: rgba(47,143,91,.15);
+  padding: .8rem;
   border-radius: 10px;
   text-align: center;
-}
-
-.stats {
-  text-align: center;
-  margin-top: 0.6rem;
-  font-size: 0.9rem;
 }
 
 .hidden { display: none; }
+.stats { text-align:center; margin-top:.6rem; }
 </style>
 </head>
 
@@ -159,17 +131,13 @@ button.secondary { background: #6c757d; }
 
 <div class="container">
 
-<!-- MENU -->
 <div id="menu">
   <button onclick="iniciar('portugues')">Língua Portuguesa</button>
-  <button onclick="alert('Estrutura pronta – inserir conteúdo')">Raciocínio Lógico</button>
-  <button onclick="alert('Estrutura pronta – inserir conteúdo')">Conhecimentos Específicos</button>
+  <button onclick="iniciar('especificos')">Conhecimentos Específicos</button>
   <button class="error" onclick="revisarErros()">Revisar erros</button>
 </div>
 
-<!-- FLASHCARD -->
 <div id="flash" class="hidden">
-
   <div class="card">
     <div id="pergunta" class="pergunta"></div>
     <div id="dica" class="dica hidden"></div>
@@ -180,42 +148,27 @@ button.secondary { background: #6c757d; }
   <button onclick="mostrarResposta()">👀 Mostrar resposta</button>
 
   <div class="actions">
+    <button class="secondary" onclick="voltarFlash()">⬅</button>
     <button class="success" onclick="marcar(true)">✔</button>
     <button class="error" onclick="marcar(false)">✖</button>
     <button class="warning" onclick="pular()">⏭</button>
   </div>
 
-  <div class="stats" id="stats"></div>
-
-  <button class="secondary" onclick="voltar()">Voltar ao menu</button>
-  <button class="secondary" onclick="zerarProgresso()">Zerar acertos e erros</button>
+  <div id="stats" class="stats"></div>
+  <button class="secondary" onclick="voltarMenu()">Voltar ao menu</button>
 </div>
 
 </div>
 
 <script>
-/* ================= MODO ESCURO ================= */
-
-function toggleTheme() {
+/* ================= TEMA ================= */
+function toggleTheme(){
   document.body.classList.toggle("dark");
-  localStorage.setItem("theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
-  atualizarIcone();
+  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
 }
-
-function atualizarIcone() {
-  document.querySelector(".toggle-theme").innerText =
-    document.body.classList.contains("dark") ? "☀️" : "🌙";
-}
-
-if (localStorage.getItem("theme") === "dark") {
-  document.body.classList.add("dark");
-}
-atualizarIcone();
+if(localStorage.getItem("theme")==="dark") document.body.classList.add("dark");
 
 /* ================= DADOS ================= */
-
 const flashcards = {
   portugues: [
   {
@@ -570,83 +523,136 @@ const flashcards = {
     "r": "Oração que limita o sentido do antecedente, sendo essencial para a compreensão da frase."
   }
 ]
+    especificos: [
+    {
+      q: "Qual teoria foca na racionalização do trabalho no nível operacional?",
+      d: "Taylor • Eficiência • Chão de fábrica",
+      r: "Administração Científica"
+    },
+  {
+    "pergunta": "Quais são as 4 funções do processo administrativo (sigla PODC)?",
+    "dicas": ["Neoclássica", "Ciclo administrativo"],
+    "resposta": "Planejamento, Organização, Direção e Controle"
+  },
+  {
+    "pergunta": "Qual nível de planejamento é focado no longo prazo e na organização como um todo?",
+    "dicas": ["Institucional", "Macro", "Ambiente externo"],
+    "resposta": "Planejamento Estratégico"
+  },
+  {
+    "pergunta": "Qual estrutura organizacional quebra a unidade de comando com dupla subordinação?",
+    "dicas": ["Híbrida", "Projetos + Funcional"],
+    "resposta": "Estrutura Matricial"
+  },
+  {
+    "pergunta": "O que significa a sigla SWOT (ou FOFA) no diagnóstico estratégico?",
+    "dicas": ["Interno e Externo", "Matriz"],
+    "resposta": "Forças, Fraquezas, Oportunidades e Ameaças"
+  },
+  {
+    "pergunta": "Qual teoria introduziu o conceito de 'Homo Social' e foco em grupos informais?",
+    "dicas": ["Elton Mayo", "Hawthorne"],
+    "resposta": "Teoria das Relações Humanas"
+  },
+  {
+    "pergunta": "Uma estrutura com muitos níveis hierárquicos e amplitude estreita é chamada de?",
+    "dicas": ["Verticalizada", "Pirâmide alta"],
+    "resposta": "Estrutura Alta"
+  },
+  {
+    "pergunta": "Qual é a função administrativa que consiste no agrupamento de atividades e alocação de recursos?",
+    "dicas": ["Divisão do trabalho", "Estrutura"],
+    "resposta": "Organização"
+  },
+  {
+    "pergunta": "Na pirâmide do planejamento, qual nível transforma o estratégico em planos de médio prazo?",
+    "dicas": ["Departamental", "Gerência média"],
+    "resposta": "Planejamento Tático"
+  },
+  {
+    "pergunta": "Quem é o autor da Teoria Clássica que definiu os 14 princípios da administração?",
+    "dicas": ["Foco na estrutura", "Unidade de comando"],
+    "resposta": "Henri Fayol"
+  },
+  {
+    "pergunta": "Qual modelo de organização foca na impessoalidade, hierarquia e normas escritas?",
+    "dicas": ["Max Weber", "Racionalidade legal"],
+    "resposta": "Burocracia"
+  },
+  {
+    "pergunta": "O que representa a 'Amplitude Administrativa' (ou de controle)?",
+    "dicas": ["Subordinados", "Gestão"],
+    "resposta": "O número de subordinados que um gestor consegue supervisionar"
+  },
+  {
+    "pergunta": "Qual a principal diferença entre Eficiência e Eficácia?",
+    "dicas": ["Meios vs Fins", "Produtividade vs Resultados"],
+    "resposta": "Eficiência foca nos meios (uso de recursos), Eficácia foca nos fins (atingir objetivos)"
+  }
+  ]
 };
 
-let lista = [];
-let atual = 0;
-let modoRevisao = false;
+let lista=[], atual=0, historico=[];
 let errosSalvos = JSON.parse(localStorage.getItem("erros")) || [];
-let stats = JSON.parse(localStorage.getItem("stats")) || { acertos: 0, erros: 0 };
+let stats = JSON.parse(localStorage.getItem("stats")) || { acertos:0, erros:0 };
 
 /* ================= FUNÇÕES ================= */
-
-function iniciar(m) {
-  lista = [...flashcards[m]].sort(() => Math.random() - 0.5);
-  modoRevisao = false;
-  atual = 0;
+function iniciar(m){
+  lista=[...flashcards[m]];
+  atual=0; historico=[];
   menu.classList.add("hidden");
   flash.classList.remove("hidden");
   atualizar();
 }
 
-function revisarErros() {
-  if (!errosSalvos.length) return alert("🎉 Sem erros!");
-  lista = [...errosSalvos];
-  modoRevisao = true;
-  atual = 0;
-  menu.classList.add("hidden");
-  flash.classList.remove("hidden");
-  atualizar();
-}
-
-function atualizar() {
-  const c = lista[atual];
-  pergunta.innerText = c.q;
-  dica.innerText = c.d || "Sem dica 🙂";
-  resposta.innerText = c.r;
+function atualizar(){
+  const c=lista[atual];
+  pergunta.innerText=c.q;
+  dica.innerText=c.d||"";
+  resposta.innerText=c.r;
   dica.classList.add("hidden");
   resposta.classList.add("hidden");
-  statsEl();
+  stats.innerText=`Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
 }
 
-function mostrarDica() { dica.classList.toggle("hidden"); }
-function mostrarResposta() { resposta.classList.remove("hidden"); }
+function mostrarDica(){ dica.classList.toggle("hidden"); }
+function mostrarResposta(){ resposta.classList.remove("hidden"); }
 
-function marcar(ok) {
-  ok ? stats.acertos++ : (stats.erros++, !modoRevisao && errosSalvos.push(lista[atual]));
+function marcar(ok){
+  historico.push(atual);
+  ok ? stats.acertos++ : (stats.erros++, errosSalvos.push(lista[atual]));
   salvar();
-  proximo();
-}
-
-function pular() {
-  lista.push(lista.splice(atual, 1)[0]);
+  atual=(atual+1)%lista.length;
   atualizar();
 }
 
-function proximo() {
-  atual = (atual + 1) % lista.length;
+function pular(){
+  historico.push(atual);
+  lista.push(lista.splice(atual,1)[0]);
   atualizar();
 }
 
-function salvar() {
-  localStorage.setItem("stats", JSON.stringify(stats));
-  localStorage.setItem("erros", JSON.stringify(errosSalvos));
+function voltarFlash(){
+  if(!historico.length) return;
+  atual=historico.pop();
+  atualizar();
 }
 
-function statsEl() {
-  statsEl = document.getElementById("stats");
-  statsEl.innerText = `Acertos: ${stats.acertos} | Erros: ${stats.erros}`;
+function revisarErros(){
+  if(!errosSalvos.length) return alert("Sem erros 🎉");
+  lista=[...errosSalvos];
+  atual=0; historico=[];
+  menu.classList.add("hidden");
+  flash.classList.remove("hidden");
+  atualizar();
 }
 
-function zerarProgresso() {
-  if (!confirm("Zerar tudo?")) return;
-  stats = { acertos: 0, erros: 0 };
-  errosSalvos = [];
-  localStorage.clear();
-  statsEl();
+function salvar(){
+  localStorage.setItem("stats",JSON.stringify(stats));
+  localStorage.setItem("erros",JSON.stringify(errosSalvos));
 }
 
-function voltar() {
+function voltarMenu(){
   flash.classList.add("hidden");
   menu.classList.remove("hidden");
 }
@@ -654,5 +660,3 @@ function voltar() {
 
 </body>
 </html>
-
-
