@@ -983,8 +983,16 @@ let errosSalvos = JSON.parse(localStorage.getItem("erros")) || [];
 let stats = JSON.parse(localStorage.getItem("stats")) || { acertos: 0, erros: 0 };
 
 /* ================= FUNÇÕES ================= */
-function iniciar(m){
-  lista = [...flashcards[m]];
+function embaralhar(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+  
+  function iniciar(m){
+  lista = embaralhar([...flashcards[m]]);
   atual = 0;
   historico = [];
 
@@ -1103,6 +1111,7 @@ const flash = document.getElementById("flash");
 
 </body>
 </html>
+
 
 
 
